@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-population_vcf="population.vcf.gz"
-individual_vcf="individual.vcf.gz"
-linear_ref_fasta="ref.fa"
-chromosomes="21,22"
-n_chromosomes=2
-individual_ID="HG002"
+population_vcf=$1
+individual_vcf=$2
+linear_ref_fasta=$3
+chromosomes=$4
+n_chromosomes=$5
+individual_ID=$6
 
 
 # Make one graph per chromosome (remember --alt-paths to get variants as paths. We don't chop up nodes to smaller than 1000 bp, since we are not going to map to this graph)
