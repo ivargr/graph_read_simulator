@@ -1,0 +1,6 @@
+*.swp
+.idea
+graph_read_simulator.egg-info/
+graph_read_simulator/__pycache__/
+tests/
+
