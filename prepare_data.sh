@@ -77,41 +77,4 @@ for chromosome in $(echo $chromosomes | tr "," "\n")
 done
 
 
-# Make modified graphs only containing the haplotypes, will be used to simulate reads from
-chromosomes="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X"
-for chromosome in $(echo $chromosomes | tr "," "\n")
-	do
-	vg mod -D giab_chr$chromosome.vg > giab_chr${chromosome}_haplotype0.tmp && \
-	cat haplotype_${chromosome}_0.paths >> giab_chr${chromosome}_haplotype0.tmp && \
-	vg mod -N giab_chr${chromosome}_haplotype0.tmp | vg mod -D - > giab_chr${chromosome}_haplotype0.vg && \
-	vg index -x giab_chr${chromosome}_haplotype0.xg giab_chr${chromosome}_haplotype0.vg &
-
-	vg mod -D giab_chr$chromosome.vg > giab_chr${chromosome}_haplotype1.tmp && \
-	cat haplotype_${chromosome}_1.paths >> giab_chr${chromosome}_haplotype1.tmp && \
-	vg mod -N giab_chr${chromosome}_haplotype1.tmp | vg mod -D - > giab_chr${chromosome}_haplotype1.vg && \
-	vg index -x giab_chr${chromosome}_haplotype1.xg giab_chr${chromosome}_haplotype1.vg &
-done
-
-
-# Create a whole genome graph with only reference, used by vg to annotate positions on
-cat giab_chr?.vg giab_chr??.vg > giab_all_chromosomes.vg
-# Extract reference paths in vg format for each chromosome (bit hackish since vg only allows fetching by prefix, not by actual name)
-> reference_paths.vg
-chromosomes="1,2,3,4,5,6,7,8,9,X"
-for chromosome in $(echo $chromosomes | tr "," "\n")
-	do
-	vg paths -Q $chromosome -V -x giab.xg >> reference_paths.vg
-done
-
-# Verify by vg paths -L -v reference_paths.vg
-# Remove all paths from giab_all_chromosomes.vg and add these paths:
-vg mod -D giab_all_chromosomes.vg > tmp.vg
-cat reference_paths.vg >> tmp.vg
-vg mod -N tmp.vg > giab_reference.vg
-vg index -x giab_reference.xg giab_reference.vg
-
-
-# Simulate by running
-mkdir simulation_dir
-nohup ./vg_benchmark.sh results_3m hg19_chr1-Y.fa None /data/bioinf/whole_genome/wg1.6 data/giab_chr20_haplotype0 data/giab_chr20_haplotype1 data/giab data/giab_reference 75 "--forward-only -n 1500000 -e 0.01 -i 0.002 -l 150" 2358792 150 "" > log.txt &
 
