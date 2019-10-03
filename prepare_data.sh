@@ -77,4 +77,4 @@ for chromosome in $(echo $chromosomes | tr "," "\n")
 done
 
 
-
+echo "Done"
