@@ -43,4 +43,3 @@ cat haplotypes.txt | parallel --line-buffer -j 2 "graph_read_simulator simulate_
 Note: The simulate_reads command can be run with different parameters, run `graph_read_simulator simulate_reads` to see available options.
 
 
-
