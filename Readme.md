@@ -37,7 +37,7 @@ individual_ID="HG002"
 
 ```bash
 coverage=15
-cat haplotypes.txt | parallel --line-buffer -j 2 "graph_read_simulator simulate_reads {} $coverage" | graph_read_simulator assign_ids positions.tsv simulated_reads.fa
+cat haplotypes.txt | parallel --line-buffer -j 2 "graph_read_simulator simulate_reads -s 0.01 {} $coverage" | graph_read_simulator assign_ids positions.tsv simulated_reads.fa
 ```
 
 Note: The simulate_reads command can be run with different parameters, run `graph_read_simulator simulate_reads` to see available options.
