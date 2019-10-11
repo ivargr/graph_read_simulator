@@ -14,6 +14,7 @@ def assign_ids_wrapper(args):
 def simulate_reads_wrapper(args):
     chromosome = args.chr_haplotype.split()[0]
     haplotype = args.chr_haplotype.split()[1]
+    random_seed = int(haplotype)
 
     haplotype_interval_file_name = "haplotype_" + chromosome + "__" + haplotype + ".intervalcollection.indexed"
     haplotype_fasta_file_name = "haplotype_" + chromosome + "__" + haplotype + ".fasta"
@@ -22,7 +23,8 @@ def simulate_reads_wrapper(args):
 
     simulate_reads(chromosome, haplotype_fasta_file_name, haplotype_interval_file_name,
                    haplotype_reference_interval_file_name, args.coverage,
-                   args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob)
+                   args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob,
+                   random_seed)
 
 
 def vg_path_to_obg_interval_wrapper(args):

@@ -6,13 +6,13 @@ from offsetbasedgraph import NumpyIndexedInterval
 from numpy.random import randint
 import numpy as np
 from simple_read_mutator import Mutator
-np.random.seed(1)
 
 
 def simulate_reads(chromosome, haplotype_fasta_file_name, haplotype_interval_file_name,
                    haplotype_reference_interval_file_name, coverage=15, read_length=150,
-                   snv_prob=0.01, deletion_prob=0.001, insertion_prob=0.001):
+                   snv_prob=0.01, deletion_prob=0.001, insertion_prob=0.001, random_seed=1):
 
+    np.random.seed(random_seed)
     ref = Fasta(haplotype_fasta_file_name)
     logging.info("Chromosome length: %s" % len(ref[chromosome]))
     chrom_length = len(ref[chromosome])
