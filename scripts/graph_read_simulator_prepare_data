@@ -15,7 +15,7 @@ cat "chromosomes.txt" | parallel -j $n_chromosomes "time vg construct -C -R {} -
 vg ids -j $(for chromosome in $(echo $chromosomes | tr "," "\n"); do echo individual_chr$chromosome.vg; done)
 
 # Index the graph (make a gbwt index that will include all phased variants as paths. We will use this gbwt index later to pull out paths containing phased variants)
-vg index -x individual.xg -G individual.gbwt -v individual.vcf.gz $(for chromosome in $(echo $chromosomes | tr "," "\n"); do echo individual_chr$chromosome.vg; done)
+vg index -x individual.xg -G individual.gbwt -v $individual_vcf $(for chromosome in $(echo $chromosomes | tr "," "\n"); do echo individual_chr$chromosome.vg; done)
 
 
 # Get all haplotype paths in gam for each chromosome and each haplotype
