@@ -29,7 +29,7 @@ chromosomes="21,22"
 n_chromosomes=2
 individual_ID="HG002"
 
-./prepare_data.sh $population_vcf $individual_vcf $linear_ref_fasta $chromosomes $n_chromosomes $individual_ID
+scripts/graph_read_simulator_prepare_data $population_vcf $individual_vcf $linear_ref_fasta $chromosomes $n_chromosomes $individual_ID
 
 ```
 
