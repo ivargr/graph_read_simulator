@@ -12,7 +12,7 @@ individual_ID=$6
 #cat "chromosomes.txt" | parallel -j $n_chromosomes "time vg construct -C -R {} -r $linear_ref_fasta -v $individual_vcf -t 1 -m 1000 --alt-paths > individual_chr{}.vg"
 for chromosome in $(echo $chromosomes | tr "," "\n")
     do
-        vg construct -C -R $chromosome -r $linear_ref_fasta -v $individual_vcf -t 1 -m 1000 --alt-paths > individual_chr{}.vg &
+        vg construct -C -R $chromosome -r $linear_ref_fasta -v $individual_vcf -t 1 -m 1000 --alt-paths > individual_chr$chromosome.vg &
 done
 wait
 echo "Done with creating individual graphs"
