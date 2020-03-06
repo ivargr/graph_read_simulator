@@ -17,7 +17,7 @@ def simulate_reads_new_wrapper(args):
     haplotype = args.chr_haplotype.split()[1]
     random_seed = int(haplotype)
 
-    simulate_reads_new(chromosome, haplotype, args.coverage,
+    simulate_reads(chromosome, haplotype, args.coverage,
                    args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob,
                    random_seed)
 
