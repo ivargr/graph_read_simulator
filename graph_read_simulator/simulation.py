@@ -10,7 +10,8 @@ from simple_read_mutator import Mutator
 
 def simulate_reads(chromosome, haplotype_fasta_file_name, haplotype_interval_file_name,
                    haplotype_reference_interval_file_name, coverage=15, read_length=150,
-                   snv_prob=0.01, deletion_prob=0.001, insertion_prob=0.001, random_seed=1):
+                   snv_prob=0.01, deletion_prob=0.001, insertion_prob=0.001, repeat_mask_file_name=None, 
+                   random_seed=1):
 
     np.random.seed(random_seed)
     ref = Fasta(haplotype_fasta_file_name)
@@ -34,12 +35,24 @@ def simulate_reads(chromosome, haplotype_fasta_file_name, haplotype_interval_fil
     logging.info("Starting simulation")
     i = 0
 
+    if repeat_mask_file_name != None:
+        data = np.load(repeat_mask_file_name)
+    else:
+        data = np.ones(chrom_length)
+
+    logging.info("Here is data!: %s" % str(data))
     while i < n_reads:
 
         start = randint(chrom_min, chrom_max)
         end = start + read_length + 10
         seq = str(ref[chromosome][start:end])
         if "n" in seq:
+            continue
+
+        rep = data[start:end+1]
+#        logging.info("rep is : %s" % rep)
+#        if np.all(np.isclose(rep, rep[0])):
+        if not np.all(rep):
             continue
 
         i += 1
