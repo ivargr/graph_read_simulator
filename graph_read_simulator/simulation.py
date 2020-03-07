@@ -35,11 +35,14 @@ class CoordinateMap():
 
         return adjusted_ref_coordinate
 
-    def haplotype_coordinate_exists_between(self, start, end):
-        index_start = np.searchsorted(self.haplotype, start-1)
-        index_end = np.searchsorted(self.haplotype, end + 1)
+    def haplotype_has_variant_between(self, start, end):
+        return self.haplotype_coordinate_exists_between(start, end)
 
-        if index_end > index_start + 1:
+    def haplotype_coordinate_exists_between(self, start, end):
+        index_start = np.searchsorted(self.haplotype, start)
+        index_end = np.searchsorted(self.haplotype, end)
+
+        if index_end > index_start:
             return True
 
         return False

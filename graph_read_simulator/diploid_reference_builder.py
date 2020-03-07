@@ -100,8 +100,8 @@ class DiploidReferenceBuilder:
         logging.info("Joining haplotype sequence")
         full_haplotype_sequence = ''.join(haplotype_sequence)
         #print(full_haplotype_sequence)
-        #print(self._reference_coordinates)
-        #print(self._haplotype_coordinates)
+        print(self._reference_coordinates)
+        print(self._haplotype_coordinates)
 
         logging.info("Saving")
         np.savez("coordinate_map_chromosome%s_haplotype%s.npz" % (self.chromosome, self.haplotype), reference=np.array(self._reference_coordinates), haplotype=np.array(self._haplotype_coordinates))
