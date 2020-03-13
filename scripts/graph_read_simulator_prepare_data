@@ -77,9 +77,11 @@ cat haplotype_*__1.fasta >> haplotype1.fasta
 # Index reference and haplotype intervals (we need them later to convert coordinates from haplotype interval offset to linear ref offset)
 for chromosome in $(echo $chromosomes | tr "," "\n")
     do
+    echo $chromosome
 	graph_peak_caller index_interval -g individual_chr$chromosome.nobg individual_reference_path_$chromosome.intervalcollection &
 	graph_peak_caller index_interval -g individual_chr$chromosome.nobg haplotype_${chromosome}__0.intervalcollection &
 	graph_peak_caller index_interval -g individual_chr$chromosome.nobg haplotype_${chromosome}__1.intervalcollection &
+	wait
 done
 
 

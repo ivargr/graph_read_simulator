@@ -5,10 +5,21 @@ import sys
 from .util import make_haplotype_fasta, vg_path_to_obg_interval, make_haplotype_paths
 from .simulation import simulate_reads
 from .id_assignment import assign_ids
+from .diploid_reference_builder import DiploidReferenceBuilder
 
 
 def assign_ids_wrapper(args):
     assign_ids(args.truth_file_name, args.fasta_file_name)
+
+
+def simulate_reads_new_wrapper(args):
+    chromosome = args.chr_haplotype.split()[0]
+    haplotype = args.chr_haplotype.split()[1]
+    random_seed = int(haplotype)
+
+    simulate_reads(chromosome, haplotype, args.coverage,
+                   args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob,
+                   random_seed)
 
 
 def simulate_reads_wrapper(args):
@@ -20,15 +31,10 @@ def simulate_reads_wrapper(args):
     haplotype_fasta_file_name = "haplotype_" + chromosome + "__" + haplotype + ".fasta"
     haplotype_reference_interval_file_name = "individual_reference_path_" + chromosome + ".intervalcollection.indexed"
 
-    if args.repeat_mask != None:
-        repeat_mask_file_name = "rep_chr" + chromosome + ".npy"
-    else:
-        repeat_mask_file_name = None
-
     simulate_reads(chromosome, haplotype_fasta_file_name, haplotype_interval_file_name,
                    haplotype_reference_interval_file_name, args.coverage,
                    args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob,
-                   repeat_mask_file_name, random_seed)
+                   random_seed)
 
 
 def vg_path_to_obg_interval_wrapper(args):
@@ -38,6 +44,11 @@ def vg_path_to_obg_interval_wrapper(args):
 def make_haplotype_paths_wrapper(args):
     make_haplotype_paths(args.graph_file_name, args.linear_ref_path_file_name, args.haplotype0_file_name,
                          args.haplotype1_file_name, args.out_base_name, args.chromosome)
+
+
+def prepare_simulation(args):
+    builder = DiploidReferenceBuilder(args.reference, args.vcf, args.chromosome, args.haplotype)
+    builder.build()
 
 
 def main():
@@ -65,8 +76,15 @@ def run_argument_parser(args):
         command.add_argument(arg)
     command.set_defaults(func=make_haplotype_paths_wrapper)
 
+    # prepare simulation
+    command = subparsers.add_parser("prepare_simulation")
+    command.add_argument("--chromosome", "-c", required=True)
+    command.add_argument("--haplotype", "-a", help="Either 0 or 1", type=int, required=True)
+    command.add_argument("--vcf", "-v", required=True)
+    command.add_argument("--reference", "-r", required=True)
+    command.set_defaults(func=prepare_simulation)
 
-    # Simulate reads
+    # simulate reads
     command = subparsers.add_parser("simulate_reads")
     command.add_argument("chr_haplotype", help="String of chromosome and haplotype separated by space")
     command.add_argument("coverage", type=float)
@@ -74,8 +92,7 @@ def run_argument_parser(args):
     command.add_argument("--snv_prob", "-s", type=float, default=0.01, required=False)
     command.add_argument("--deletion_prob", "-d", type=float, default=0.001, required=False)
     command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
-    command.add_argument("--repeat_mask", "-m", type=str, nargs="?", default=None, required=False)
-    command.set_defaults(func=simulate_reads_wrapper)
+    command.set_defaults(func=simulate_reads_new_wrapper)
 
     if len(args) == 0:
         parser.print_help()
