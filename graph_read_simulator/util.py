@@ -80,6 +80,7 @@ def make_haplotype_paths(graph_file_name, linear_ref_path_file_name, haplotype0_
                 haplotype_nodes[haplotype].add(node)
 
     logging.info("N nodes in haplotype 0: %d" % len(haplotype_nodes[0]))
+    logging.info("N nodes in haplotype 0 that are also in linear ref: %d" % len(haplotype_nodes[0].intersection(linear_ref_nodes)))
     logging.info("N nodes in haplotype 1: %d" % len(haplotype_nodes[1]))
 
     # Traverse graph to get full correct haplotype intervals
@@ -93,6 +94,7 @@ def make_haplotype_paths(graph_file_name, linear_ref_path_file_name, haplotype0_
         nodes = []
         node = first_nodes[0]
         nodes_in_haplotype = haplotype_nodes[haplotype]
+        nodes_in_haplotype = set(range(0, max(linear_ref_nodes))).difference(linear_ref_nodes)
         logging.info("There are %d haplotype nodes" % len(nodes_in_haplotype))
 
         assert len(nodes_in_haplotype) > 0, "There are no haplotype nodes. Check that haplotype json files are not empty"
