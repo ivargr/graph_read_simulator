@@ -9,8 +9,7 @@ setup(name='graph_read_simulator',
       license='MIT',
       packages=['graph_read_simulator'],
       zip_safe=False,
-      install_requires=['numpy', 'pyvg==1.1.2', 'offsetbasedgraph', 'simple_read_mutator', 'pyfaidx',
-                        'graph_peak_caller==1.2.3'],
+      install_requires=['numpy', 'simple_read_mutator', 'pyfaidx'],
       classifiers=[
             'Programming Language :: Python :: 3'
       ],

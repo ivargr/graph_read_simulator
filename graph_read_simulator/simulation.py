@@ -6,6 +6,7 @@ from offsetbasedgraph import NumpyIndexedInterval
 from numpy.random import randint
 import numpy as np
 from simple_read_mutator import Mutator
+from Bio.Seq import Seq
 
 
 class CoordinateMap():
@@ -34,6 +35,23 @@ class CoordinateMap():
         adjusted_ref_coordinate = corresponding_ref_coordinate + diff
 
         return adjusted_ref_coordinate
+
+    def convert_reverse(self, reference_coordinate):
+        index = np.searchsorted(self.reference, reference_coordinate)
+        # Find index of closest reference coordinate
+        diff_before = reference_coordinate - self.reference[index - 1]
+        diff_after = reference_coordinate - self.reference[index]
+
+        if abs(diff_before) < abs(diff_after):
+            index -= 1
+            diff = diff_before
+        else:
+            diff = diff_after
+
+        corresponding_haplotype_coordinate = self.haplotype[index]
+        adjusted_haplotype_coordinate = corresponding_haplotype_coordinate + diff
+
+        return adjusted_haplotype_coordinate
 
     def haplotype_has_variant_between(self, start, end):
         return self.haplotype_coordinate_exists_between(start, end)
@@ -70,17 +88,16 @@ def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_pro
     logging.info("Starting simulation")
     i = 0
 
-    if repeat_mask_file_name != None:
-        data = np.load(repeat_mask_file_name)
-    else:
-        data = np.ones(chrom_length)
-
-    logging.info("Here is data!: %s" % str(data))
     while i < n_reads:
 
         start = randint(chrom_min, chrom_max)
         end = start + read_length + 10
         seq = str(ref[chromosome][start:end])
+
+        if np.random.randint(0, 2) == 1:
+            # reverse complement
+            seq = str(Seq(seq).reverse_complement())
+
         if "n" in seq or "N" in seq:
             continue
 

@@ -94,6 +94,32 @@ def run_argument_parser(args):
     command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
     command.set_defaults(func=simulate_reads_new_wrapper)
 
+    # chip-seq
+    def simulate_chip_seq(args):
+        from .chip_seq import ChipSeqSimulator
+        simulator = ChipSeqSimulator(args.chromosome, 0, args.chromosome_size, args.n_peaks, args.read_length, args.fragment_length,
+                                     average_fragments_per_peak=args.average_fragments_per_peak,
+                                     average_fragments_per_peak_std=args.average_fragments_per_peak_std,
+                                     snv_error_prob=args.snv_prob,
+                                     deletion_error_prob=args.deletion_prob,
+                                     insertion_error_prob=args.insertion_prob,
+                                     noise_coverage=args.noise_coverage)
+        simulator.simulate()
+
+    command = subparsers.add_parser("simulate_chip_seq")
+    command.add_argument("--chromosome", "-c", required=True)
+    command.add_argument("--n_peaks", "-n", type=int, default=210, required=False)
+    command.add_argument("--fragment_length", "-f", type=int, default=210, required=False)
+    command.add_argument("--read_length", "-r", type=int, default=76, required=False)
+    command.add_argument("--snv_prob", "-s", type=float, default=0.01, required=False)
+    command.add_argument("--deletion_prob", "-d", type=float, default=0.001, required=False)
+    command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
+    command.add_argument("--chromosome_size", "-z", type=float, default=1000, required=False)
+    command.add_argument("--average_fragments_per_peak", "-a", type=int, default=15, required=False)
+    command.add_argument("--average_fragments_per_peak_std", "-A", type=int, default=3, required=False)
+    command.add_argument("--noise-coverage", "-N", type=float, default=0.1, required=False)
+    command.set_defaults(func=simulate_chip_seq)
+
     if len(args) == 0:
         parser.print_help()
         sys.exit(1)
