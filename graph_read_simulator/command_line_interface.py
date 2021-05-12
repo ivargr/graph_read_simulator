@@ -15,7 +15,7 @@ def assign_ids_wrapper(args):
 def simulate_reads_new_wrapper(args):
     chromosome = args.chr_haplotype.split()[0]
     haplotype = args.chr_haplotype.split()[1]
-    random_seed = random.randint(0, 10000000000)
+    random_seed = random.randint(0, 2**32-1)
 
     simulate_reads(chromosome, haplotype, args.coverage,
                    args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob,
