@@ -113,4 +113,3 @@ def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_pro
 
         print("%s %d %d %s" % (chromosome, ref_offset, n_nodes_not_in_linear_ref, mutated_seq))
 
-

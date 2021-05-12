@@ -6,7 +6,7 @@ from .util import make_haplotype_fasta, vg_path_to_obg_interval, make_haplotype_
 from .simulation import simulate_reads
 from .id_assignment import assign_ids
 from .diploid_reference_builder import DiploidReferenceBuilder
-
+import random
 
 def assign_ids_wrapper(args):
     assign_ids(args.truth_file_name, args.fasta_file_name)
@@ -15,7 +15,7 @@ def assign_ids_wrapper(args):
 def simulate_reads_new_wrapper(args):
     chromosome = args.chr_haplotype.split()[0]
     haplotype = args.chr_haplotype.split()[1]
-    random_seed = int(haplotype)
+    random_seed = random.randint(0, 10000000000)
 
     simulate_reads(chromosome, haplotype, args.coverage,
                    args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob,
