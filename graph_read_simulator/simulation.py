@@ -67,9 +67,9 @@ class CoordinateMap():
 
 
 def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_prob=0.01, deletion_prob=0.001,
-                       insertion_prob=0.001, random_seed=1):
-    haplotype_fasta_file_name = "chromosome%s_haplotype%s_reference.fasta" % (chromosome, haplotype)
-    coordinate_map = CoordinateMap.from_file("coordinate_map_chromosome%s_haplotype%s.npz" % (chromosome, haplotype))
+                       insertion_prob=0.001, random_seed=1, data_base_name=""):
+    haplotype_fasta_file_name = "%schromosome%s_haplotype%s_reference.fasta" % (data_base_name, chromosome, haplotype)
+    coordinate_map = CoordinateMap.from_file("%scoordinate_map_chromosome%s_haplotype%s.npz" % (data_base_name, chromosome, haplotype))
 
 
     np.random.seed(random_seed)

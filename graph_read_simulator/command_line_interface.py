@@ -19,7 +19,7 @@ def simulate_reads_new_wrapper(args):
 
     simulate_reads(chromosome, haplotype, args.coverage,
                    args.read_length, args.snv_prob, args.deletion_prob, args.insertion_prob,
-                   random_seed)
+                   random_seed, data_base_name=args.data_base_name)
 
 
 def simulate_reads_wrapper(args):
@@ -93,6 +93,7 @@ def run_argument_parser(args):
     command.add_argument("--snv_prob", "-s", type=float, default=0.01, required=False)
     command.add_argument("--deletion_prob", "-d", type=float, default=0.001, required=False)
     command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
+    command.add_argument("--data-base-name", "-D", help="Base file name for data, from prepare_simulation")
     command.set_defaults(func=simulate_reads_new_wrapper)
 
     # simulate reads using multiple threads
