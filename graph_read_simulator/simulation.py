@@ -79,8 +79,9 @@ def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_pro
     chrom_min = 0
     chrom_max = chrom_length - read_length - 10
 
-    n_reads = int(coverage * chrom_length / read_length)
+    n_reads = int(0.5 * coverage * chrom_length / read_length)
     logging.info("Will simulate %d reads to get coverage %.3f on chromosome %s" %
+    logging.warning("Coverage is halved, because assuming one wants half coverage on each haplotype")
     (n_reads, coverage, chromosome))
 
     mutator = Mutator(read_length + 10)
