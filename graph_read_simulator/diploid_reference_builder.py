@@ -105,7 +105,7 @@ class DiploidReferenceBuilder:
         #print(self._haplotype_coordinates)
 
         logging.info("Saving")
-        np.savez("%scoordinate_mae_chromosome%s_haplotype%s.npz" % (self.base_output_name, self.chromosome, self.haplotype), reference=np.array(self._reference_coordinates), haplotype=np.array(self._haplotype_coordinates))
+        np.savez("%scoordinate_map_chromosome%s_haplotype%s.npz" % (self.base_output_name, self.chromosome, self.haplotype), reference=np.array(self._reference_coordinates), haplotype=np.array(self._haplotype_coordinates))
         with open("%schromosome%s_haplotype%d_reference.fasta" % (self.base_output_name, self.chromosome, self.haplotype), "w") as f:
             f.writelines([">%s\n" % self.chromosome, full_haplotype_sequence + "\n"])
 
