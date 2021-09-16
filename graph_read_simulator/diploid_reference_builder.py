@@ -5,7 +5,7 @@ import numpy as np
 
 
 class DiploidReferenceBuilder:
-    def __init__(self, reference_file_name, vcf_file_name, chromosome, haplotype=0):
+    def __init__(self, reference_file_name, vcf_file_name, chromosome, haplotype=0, base_output_name=""):
         self.reference = Fasta(reference_file_name)[chromosome]
         self.chromosome = chromosome
         self.haplotype = haplotype
@@ -13,6 +13,7 @@ class DiploidReferenceBuilder:
         self._reference_coordinates = [1]
         self._haplotype_coordinates = [1]
         self._variant_positions = []
+        self.base_output_name = base_output_name
 
     def build(self):
         haplotype_sequence = []  # Stores a list of sequences that are to be joined at the end
@@ -104,8 +105,8 @@ class DiploidReferenceBuilder:
         #print(self._haplotype_coordinates)
 
         logging.info("Saving")
-        np.savez("coordinate_map_chromosome%s_haplotype%s.npz" % (self.chromosome, self.haplotype), reference=np.array(self._reference_coordinates), haplotype=np.array(self._haplotype_coordinates))
-        with open("chromosome%s_haplotype%d_reference.fasta" % (self.chromosome, self.haplotype), "w") as f:
+        np.savez("%scoordinate_mae_chromosome%s_haplotype%s.npz" % (self.base_output_name, self.chromosome, self.haplotype), reference=np.array(self._reference_coordinates), haplotype=np.array(self._haplotype_coordinates))
+        with open("%schromosome%s_haplotype%d_reference.fasta" % (self.base_output_name, self.chromosome, self.haplotype), "w") as f:
             f.writelines([">%s\n" % self.chromosome, full_haplotype_sequence + "\n"])
 
         logging.info("Saved")

@@ -47,7 +47,7 @@ def make_haplotype_paths_wrapper(args):
 
 
 def prepare_simulation(args):
-    builder = DiploidReferenceBuilder(args.reference, args.vcf, args.chromosome, args.haplotype)
+    builder = DiploidReferenceBuilder(args.reference, args.vcf, args.chromosome, args.haplotype, args.base_output_name)
     builder.build()
 
 
@@ -82,6 +82,7 @@ def run_argument_parser(args):
     command.add_argument("--haplotype", "-a", help="Either 0 or 1", type=int, required=True)
     command.add_argument("--vcf", "-v", required=True)
     command.add_argument("--reference", "-r", required=True)
+    command.add_argument("--base-output-name", "-o", required=False, )
     command.set_defaults(func=prepare_simulation)
 
     # simulate reads
@@ -93,6 +94,18 @@ def run_argument_parser(args):
     command.add_argument("--deletion_prob", "-d", type=float, default=0.001, required=False)
     command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
     command.set_defaults(func=simulate_reads_new_wrapper)
+
+    # simulate reads using multiple threads
+    command = subparsers.add_parser("simulate_reads_multithread")
+    command.add_argument("--chromosomes", "-c", help="Comma-separated list of chromosomes")
+    command.add_argument("--data-base-name", "-D", help="Base file name for data, from prepare_simulation")
+    command.add_argument("--coverage", "-C", type=float)
+    command.add_argument("--read_length", "-r", type=int, default=150, required=False)
+    command.add_argument("--snv_prob", "-s", type=float, default=0.01, required=False)
+    command.add_argument("--deletion_prob", "-d", type=float, default=0.001, required=False)
+    command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
+    command.set_defaults(func=simulate_reads_new_wrapper)
+
 
     # chip-seq
     def simulate_chip_seq(args):
