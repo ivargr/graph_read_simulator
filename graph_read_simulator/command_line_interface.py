@@ -7,6 +7,10 @@ from .simulation import simulate_reads
 from .id_assignment import assign_ids
 from .diploid_reference_builder import DiploidReferenceBuilder
 import random
+from pyfaidx import Fasta
+from .vcf_simulation import VcfSimulator
+import numpy as np
+
 
 def assign_ids_wrapper(args):
     assign_ids(args.truth_file_name, args.fasta_file_name)
@@ -143,6 +147,22 @@ def run_argument_parser(args):
     command.add_argument("truth_file_name")
     command.add_argument("fasta_file_name")
     command.set_defaults(func=assign_ids_wrapper)
+
+    def simulate_population_vcf(args):
+        np.random.seed(1)
+        ref = str(Fasta(args.reference)["1"])
+        simulator = VcfSimulator(ref, args.n_variants, args.n_individuals)
+        variants = simulator.simulate()
+        variants.to_vcf_file(args.out_file_name, args.header_file)
+
+    # Simulate a population vcf
+    command = subparsers.add_parser("simulate_population_vcf")
+    command.add_argument("-r", "--reference", required=True)
+    command.add_argument("-n", "--n-variants", default=50, type=int, required=False)
+    command.add_argument("-i", "--n-individuals", default=50, type=int, required=False)
+    command.add_argument("-o", "--out-file-name")
+    command.add_argument("-H", "--header-file", required=True, help="Use vcf header from this file")
+    command.set_defaults(func=simulate_population_vcf)
 
     args = parser.parse_args(args)
     args.func(args)
