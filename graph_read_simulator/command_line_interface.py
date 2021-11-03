@@ -10,6 +10,7 @@ import random
 from pyfaidx import Fasta
 from .vcf_simulation import VcfSimulator
 import numpy as np
+from .vcf_simulation import Variants
 
 
 def assign_ids_wrapper(args):
@@ -150,19 +151,62 @@ def run_argument_parser(args):
 
     def simulate_population_vcf(args):
         np.random.seed(1)
+        from .vcf_simulation import GenotypeMatrixSimulator
         ref = str(Fasta(args.reference)["1"])
-        simulator = VcfSimulator(ref, args.n_variants, args.n_individuals)
+        genotype_matrix = GenotypeMatrixSimulator(args.n_individuals*2, args.n_variants, correlation_rate=0.95, mutation_rate=0.002)
+        simulated_genotype_matrix = genotype_matrix.subsample(args.n_individuals)
+        logging.info("Subsampled genotype matrix to %d individuals" % args.n_individuals)
+
+        simulator = VcfSimulator(ref, simulated_genotype_matrix)
         variants = simulator.simulate()
         variants.to_vcf_file(args.out_file_name, args.header_file)
+        logging.info("Wrote population to %s" % args.simulate_individual)
+
+        if args.simulate_individual is not None:
+            individual = VcfSimulator.numeric_genotypes_to_literal(genotype_matrix.simulate_single_individual_not_in_matrix())
+            print(individual)
+            for i, variant in enumerate(variants):
+                variant.set_genotypes([individual[i]])
+
+            Variants(variants).to_vcf_file(args.simulate_individual)
+            logging.info("Wrote individual to %s" % args.simulate_individual)
+
 
     # Simulate a population vcf
     command = subparsers.add_parser("simulate_population_vcf")
     command.add_argument("-r", "--reference", required=True)
     command.add_argument("-n", "--n-variants", default=50, type=int, required=False)
     command.add_argument("-i", "--n-individuals", default=50, type=int, required=False)
+    command.add_argument("-I", "--simulate-individual", required=False, help="If specified, simulate an individual, and write to this file")
     command.add_argument("-o", "--out-file-name")
-    command.add_argument("-H", "--header-file", required=True, help="Use vcf header from this file")
+    command.add_argument("-H", "--header-file", required=False, help="Use vcf header from this file")
     command.set_defaults(func=simulate_population_vcf)
+
+    def simulate_individual_vcf(args):
+        import obgraph
+        from obgraph.variants import VcfVariants
+        from .vcf_simulation import make_simulated_individual_genotypes_from_genotype_matrix, Variant, Variants
+        np.random.seed(args.random_seed)
+        logging.info("Using random seed %d" % args.random_seed)
+        genotype_matrix = obgraph.genotype_matrix.GenotypeMatrix.from_variants(
+            obgraph.variants.VcfVariants.from_vcf(args.population_vcf))
+        genotype_matrix = genotype_matrix.matrix
+        simulated_genotypes = make_simulated_individual_genotypes_from_genotype_matrix(genotype_matrix)
+
+        population_variants = VcfVariants.from_vcf(args.population_vcf)
+        individual_variants = []
+        for i, variant in enumerate(population_variants):
+            individual_variants.append(Variant(1, variant.position, variant.ref_sequence, variant.variant_sequence, [simulated_genotypes[i]]))
+
+        Variants(individual_variants).to_vcf_file(args.out_file_name)
+
+
+    # simulate individual vcf from population vcf
+    command = subparsers.add_parser("simulate_individual_vcf")
+    command.add_argument("-v", "--population-vcf", required=True)
+    command.add_argument("-o", "--out-file-name")
+    command.add_argument("-s", "--random-seed", type=int, default=1, required=True)
+    command.set_defaults(func=simulate_individual_vcf)
 
     args = parser.parse_args(args)
     args.func(args)

@@ -74,6 +74,7 @@ def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_pro
 
     np.random.seed(random_seed)
     ref = Fasta(haplotype_fasta_file_name)
+    logging.info("CHromosomes: %s" % str(ref.keys()))
     logging.info("Chromosome length: %s" % len(ref[chromosome]))
     chrom_length = len(ref[chromosome])
     chrom_min = 0
