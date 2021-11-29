@@ -92,7 +92,7 @@ class Variants:
 
 
 class GenotypeMatrixSimulator:
-    def __init__(self, n_individuals, n_variants, correlation_rate=0.95, mutation_rate=0.005):
+    def __init__(self, n_individuals, n_variants, correlation_rate=0.95, mutation_rate=0.01):
         assert n_individuals
         self._n_individuals = n_individuals
         self._n_variants = n_variants
@@ -101,12 +101,12 @@ class GenotypeMatrixSimulator:
         self.matrix = None
         self.simulate_genotypes_realistically()
 
-    def _random_sparse_genotype_matrix(self, n_individuals, nonzero_prob=0.05):
+    def _random_sparse_genotype_matrix(self, n_individuals, nonzero_prob=0.15):
         matrix = np.zeros((n_individuals, self._n_variants)) + 1
         for individual in range(n_individuals):
             for variant in range(self._n_variants):
                 if np.random.random() < nonzero_prob:
-                    if np.random.random() < 0.66:
+                    if np.random.random() < 0.33:
                         matrix[individual, variant] = 2
                     else:
                         matrix[individual, variant] = 3
@@ -145,7 +145,7 @@ class GenotypeMatrixSimulator:
 
     def simulate_genotypes_realistically(self):
         # simulate first a few indidividuals, then simulate more from them, and so on
-        n_individuals = [max(2, self._n_individuals // 40), max(2, self._n_individuals // 20), self._n_individuals // 3]
+        n_individuals = [max(2, self._n_individuals // 20), max(2, self._n_individuals // 15), self._n_individuals // 3]
         n_individuals.append(self._n_individuals-sum(n_individuals))
         logging.info("Will simulate in batches of individuals: %s" % n_individuals)
 
@@ -184,13 +184,17 @@ class VcfSimulator:
         return ''.join(np.random.choice(nucleotides, length))
 
     def _simulate_variant_at_position(self, position):
-        if np.random.random() < 0.9:
+        if np.random.random() < 0.7:
             # SNP
             ref_sequence = self._ref[position]
             alt_sequence = VcfSimulator.random_nucleotides(1, ref_sequence)
         else:
             # 50/50 insertion/deletion
-            size = np.random.randint(2, 5)
+            if np.random.randint(0, 2) == 0:
+                size = np.random.randint(2, 6)
+            else:
+                size = np.random.randint(2, 40)
+
             if np.random.random() < 0.5:
                 ref_sequence = ''.join(self._ref[position:position+size])
                 alt_sequence = self._ref[position]

@@ -164,7 +164,6 @@ def run_argument_parser(args):
 
         if args.simulate_individual is not None:
             individual = VcfSimulator.numeric_genotypes_to_literal(genotype_matrix.simulate_single_individual_not_in_matrix())
-            print(individual)
             for i, variant in enumerate(variants):
                 variant.set_genotypes([individual[i]])
 
