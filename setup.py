@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='graph_read_simulator',
-      version='0.0.2',
+      version='0.0.3',
       description='Graph Read Simulator',
       url='http://github.com/ivargr/graph_read_simulator',
       author='Ivar Grytten',
@@ -9,7 +9,7 @@ setup(name='graph_read_simulator',
       license='MIT',
       packages=['graph_read_simulator'],
       zip_safe=False,
-      install_requires=['numpy', 'simple_read_mutator', 'pyfaidx'],
+      install_requires=['numpy', 'simple_read_mutator', 'pyfaidx', 'pyvg', 'biopython', 'obgraph'],
       classifiers=[
             'Programming Language :: Python :: 3'
       ],
@@ -25,4 +25,5 @@ rm -rf dist
 python3 setup.py sdist
 python3 setup.py bdist_wheel
 twine upload dist/graph_read_simulator-*.tar.gz
+
 """
