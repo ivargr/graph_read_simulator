@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='graph_read_simulator',
-      version='0.0.1',
+      version='0.0.2',
       description='Graph Read Simulator',
       url='http://github.com/ivargr/graph_read_simulator',
       author='Ivar Grytten',
@@ -21,7 +21,8 @@ setup(name='graph_read_simulator',
 To update package:
 #Update version number manually in this file
 
-sudo python3 setup.py sdist
-sudo python3 setup.py bdist_wheel
-twine upload dist/graph_read_simulator_X.tar.gz
+rm -rf dist
+python3 setup.py sdist
+python3 setup.py bdist_wheel
+twine upload dist/graph_read_simulator-*.tar.gz
 """
