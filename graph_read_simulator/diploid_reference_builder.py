@@ -6,6 +6,7 @@ import numpy as np
 
 class DiploidReferenceBuilder:
     def __init__(self, reference_file_name, vcf_file_name, chromosome, haplotype=0, base_output_name=""):
+        logging.info("Reading fasta %s" % reference_file_name)
         self.reference = Fasta(reference_file_name)[chromosome]
         self.chromosome = chromosome
         self.haplotype = haplotype
@@ -67,15 +68,20 @@ class DiploidReferenceBuilder:
             if previous_reference_coordinate == ref_position:
                 new_reference_sequence = ""
             elif previous_reference_coordinate > ref_position:
-                logging.error("Ref position in vcf is smaller than where we are at. Is this an overlapping variant? Skipping")
+                logging.error("Ref position in vcf is smaller than where we are at (%d). Is this an overlapping variant? Skipping" % ref_position)
                 logging.error(line)
                 logging.error("Prev line: %s" % prev_line)
                 continue
             else:
+
                 try:
                     new_reference_sequence = str(self.reference[previous_reference_coordinate-1:ref_position-1])
                 except ValueError:
                     logging.error("Could not get sequence from %d to %d" % (previous_reference_coordinate, ref_position))
+                    raise
+                except OSError:
+                    logging.error("Processed line %s" % line)
+                    logging.error("Could not get sequence from %d to %d" % (previous_reference_coordinate-1, ref_position-1))
                     raise
 
             haplotype_sequence.append(new_reference_sequence)
