@@ -2,6 +2,7 @@ from pyfaidx import Fasta
 import gzip
 import logging
 import numpy as np
+from obgraph.variants import get_variant_type, VcfVariant
 
 
 class DiploidReferenceBuilder:
@@ -96,9 +97,13 @@ class DiploidReferenceBuilder:
 
             # Now add new haplotype sequence for this variant and increase reference and haplotype coordinates
             previous_reference_coordinate += len(ref_sequence) + len(new_reference_sequence)
-            variant_sequence = l[4].split(",")[int(allele) - 1]  # Gets the sequence for this haplotype
+            #variant_sequence = l[4].split(",")[int(allele) - 1]  # Gets the sequence for this haplotype
             #print("Adding haplotype sequence %s" % variant_sequence)
             #print("Previous ref coordinat is now: %d" % previous_reference_coordinate)
+            vcf_variant = VcfVariant.from_vcf_line(line)
+            variant_sequence = vcf_variant.get_variant_sequence()
+            logging.info("Variant sequence for variant %s. %s" % (l, variant_sequence))
+
             haplotype_sequence.append(variant_sequence)
             #print("Adding %d to haplotype coordinate (from haplotype sequence)" % len(haplotype_sequence))
             current_haplotype_coordinate += len(variant_sequence)
@@ -109,6 +114,11 @@ class DiploidReferenceBuilder:
         #print(full_haplotype_sequence)
         #print(self._reference_coordinates)
         #print(self._haplotype_coordinates)
+
+        # add coordinates for end of haplotypes as well
+        self._reference_coordinates.append(len(self.reference))
+        self._haplotype_coordinates.append(len(full_haplotype_sequence))
+
 
         logging.info("Saving")
         coordinate_map_fil_name = "%scoordinate_map_chromosome%s_haplotype%s.npz" % (self.base_output_name, self.chromosome, self.haplotype)
