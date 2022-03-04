@@ -102,7 +102,6 @@ class DiploidReferenceBuilder:
             #print("Previous ref coordinat is now: %d" % previous_reference_coordinate)
             vcf_variant = VcfVariant.from_vcf_line(line)
             variant_sequence = vcf_variant.get_variant_sequence()
-            logging.info("Variant sequence for variant %s. %s" % (l, variant_sequence))
 
             haplotype_sequence.append(variant_sequence)
             #print("Adding %d to haplotype coordinate (from haplotype sequence)" % len(haplotype_sequence))
