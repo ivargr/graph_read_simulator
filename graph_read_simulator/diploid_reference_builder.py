@@ -53,10 +53,16 @@ class DiploidReferenceBuilder:
             # We phase all genotypes that are not phased
             genotype = genotype.replace("/", "|")
 
-            if genotype == "0|0" or genotype == ".|.":
+            if genotype == "0|0" or genotype == ".|." or genotype == ".":
                 continue
 
-            allele = genotype.split("|")[self.haplotype]
+            try:
+                allele = genotype.split("|")[self.haplotype]
+            except IndexError:
+                logging.error("Could not parse genotype %s" % genotype)
+                logging.error("Original vcf line: \n%s" % line)
+                raise
+
             if allele == "0":
                 # Has the reference, do nothing
                 continue
