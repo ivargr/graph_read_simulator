@@ -9,6 +9,14 @@ from simple_read_mutator import Mutator
 from Bio.Seq import Seq
 
 
+class OneToOneCoordinateMap:
+    def __init__(self):
+        pass
+
+    def convert(self, coordinate):
+        return coordinate
+
+
 class CoordinateMap():
     def __init__(self, reference, haplotype):
         self.reference = reference
@@ -66,6 +74,7 @@ class CoordinateMap():
         return False
 
 
+
 def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_prob=0.01, deletion_prob=0.001,
                        insertion_prob=0.001, random_seed=1, data_base_name=""):
     haplotype_fasta_file_name = "%schromosome%s_haplotype%s_reference.fasta" % (data_base_name, chromosome, haplotype)
@@ -73,33 +82,33 @@ def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_pro
 
 
     np.random.seed(random_seed)
-    ref = Fasta(haplotype_fasta_file_name)
-    logging.info("CHromosomes: %s" % str(ref.keys()))
-    logging.info("Chromosome length: %s" % len(ref[chromosome]))
-    chrom_length = len(ref[chromosome])
+    ref = Fasta(haplotype_fasta_file_name)[chromosome]
+
+    _simulate(ref, chromosome, coordinate_map, coverage, read_length, deletion_prob, insertion_prob, snv_prob)
+
+
+def _simulate(ref, chromosome, coordinate_map, coverage, read_length=150, deletion_prob=0, insertion_prob=0, snv_prob=0,
+              include_reverse_complements=False, skip_reads_with_missing_bases=True):
+    chrom_length = len(ref)
     chrom_min = 0
     chrom_max = chrom_length - read_length - 10
-
     n_reads = int(0.5 * coverage * chrom_length / read_length)
     logging.info("Will simulate %d reads to get coverage %.3f on chromosome %s" % (n_reads, coverage, chromosome))
     logging.warning("Coverage is halved, because assuming one wants half coverage on each haplotype")
-
     mutator = Mutator(read_length + 10)
-
     logging.info("Starting simulation")
     i = 0
-
     while i < n_reads:
 
         start = randint(chrom_min, chrom_max)
         end = start + read_length + 10
-        seq = str(ref[chromosome][start:end])
+        seq = str(ref[start:end])
 
         if np.random.randint(0, 2) == 1:
             # reverse complement
             seq = str(Seq(seq).reverse_complement())
 
-        if "n" in seq or "N" in seq:
+        if skip_reads_with_missing_bases and "n" in seq or "N" in seq:
             continue
 
         i += 1

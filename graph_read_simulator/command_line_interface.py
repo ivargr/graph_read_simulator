@@ -56,6 +56,33 @@ def prepare_simulation(args):
     builder.build()
 
 
+def simulate_from_linear_ref(args):
+    from .simulation import _simulate, OneToOneCoordinateMap
+    ref = Fasta(args.reference_fasta)
+    coordinate
+    _simulate(ref, args.chromosome, OneToOneCoordinateMap(), args.coverage, args.read_length,
+              include_reverse_complements=False, skip_reads_with_missing_bases=False)
+
+
+
+def sample_from_linear_ref(args):
+    ref = Fasta(args.reference_fasta)
+    spacing = args.spacing
+    read_length = args.read_length
+    chromosomes = list(ref.keys())
+    logging.info("Will sample from chromosomes %s" % chromosomes)
+
+    for chromosome in chromosomes:
+        ref_sequence = ref[chromosome]
+        for start in range(0, len(ref_sequence)-read_length, spacing):
+            if start % 1000000 == 0:
+                logging.info("On chromosome %s, pos %d/%d" % (chromosome, start, len(ref_sequence)))
+
+            end = start + read_length
+            seq = ref_sequence[start:end]
+            print("%s %d %d %s" % (chromosome, start, 0, seq))
+
+
 def main():
     run_argument_parser(sys.argv[1:])
 
@@ -112,6 +139,24 @@ def run_argument_parser(args):
     command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
     command.set_defaults(func=simulate_reads_new_wrapper)
 
+
+    # simulate from linear ref
+    command = subparsers.add_parser("simulate_from_linear_ref")
+    command.add_argument("chromosome")
+    command.add_argument("coverage", type=float)
+    command.add_argument("-f", "--reference-fasta", required=True)
+    command.add_argument("--read_length", "-r", type=int, default=150, required=False)
+    command.add_argument("--snv_prob", "-s", type=float, default=0.01, required=False)
+    command.add_argument("--deletion_prob", "-d", type=float, default=0.001, required=False)
+    command.add_argument("--insertion_prob", "-i", type=float, default=0.001, required=False)
+    command.set_defaults(func=simulate_from_linear_ref)
+
+
+    command = subparsers.add_parser("sample_from_linear_ref")
+    command.add_argument("-f", "--reference-fasta", required=True)
+    command.add_argument("-s", "--spacing", required=False, type=int, default=5)
+    command.add_argument("--read_length", "-r", type=int, default=150, required=False)
+    command.set_defaults(func=sample_from_linear_ref)
 
     # chip-seq
     def simulate_chip_seq(args):
