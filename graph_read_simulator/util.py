@@ -1,12 +1,10 @@
 import logging
 import sys
-from pyvg.vgobjects import Alignment
-from pyvg.conversion import get_json_lines
-from pyvg.conversion import vg_json_file_to_intervals
-from offsetbasedgraph import IntervalCollection, Graph, SequenceGraph, Interval
+
 
 
 def make_haplotype_fasta(chromosome, haplotype, data_dir):
+    from offsetbasedgraph import IntervalCollection, Graph, SequenceGraph, Interval
 
     s = SequenceGraph.from_file(data_dir + "giab_chr" + chromosome + ".nobg.sequences")
     print("Getting interval")
@@ -24,6 +22,10 @@ def make_haplotype_fasta(chromosome, haplotype, data_dir):
 
 
 def vg_path_to_obg_interval(path_file_name, out_file_name):
+    from offsetbasedgraph import IntervalCollection, Graph, SequenceGraph, Interval
+    from pyvg.vgobjects import Alignment
+    from pyvg.conversion import get_json_lines
+    from pyvg.conversion import vg_json_file_to_intervals
 
     json_objects = get_json_lines(path_file_name)
 
@@ -50,6 +52,10 @@ def vg_path_to_obg_interval(path_file_name, out_file_name):
 
 def make_haplotype_paths(graph_file_name, linear_ref_path_file_name, haplotype0_file_name, haplotype1_file_name, out_base_name, chromosome):
     # Make a linear reference fasta and interval and haplotypes fasta and intervals
+    from offsetbasedgraph import IntervalCollection, Graph, SequenceGraph, Interval
+    from pyvg.vgobjects import Alignment
+    from pyvg.conversion import get_json_lines
+    from pyvg.conversion import vg_json_file_to_intervals
 
     chrom = chromosome
     graph = Graph.from_file(graph_file_name)

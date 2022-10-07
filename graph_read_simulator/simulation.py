@@ -2,7 +2,6 @@ import sys
 import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s, %(levelname)s: %(message)s")
 from pyfaidx import Fasta
-from offsetbasedgraph import NumpyIndexedInterval
 from numpy.random import randint
 import numpy as np
 from simple_read_mutator import Mutator
