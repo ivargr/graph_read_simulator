@@ -3,6 +3,15 @@
 This is a simple collection of scripts for simulating reads for a diploid genome by using vg and genome graphs
 
 
+
+## Running
+```bash
+graph_read_simulator simulate_reads -s 0.01 CHROMOSOME_HAPLOTYPE COVERAGE
+```
+
+
+## Complex running (using GNU parallel, e.g. on a cluster)
+
 ### Step 1: Make config files with chromosomes and haplotypes
 *chromosomes.txt* (list of chromosome names, one on each line):
 ```
