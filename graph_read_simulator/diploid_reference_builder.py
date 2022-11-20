@@ -108,6 +108,9 @@ class DiploidReferenceBuilder:
             #print("Previous ref coordinat is now: %d" % previous_reference_coordinate)
             vcf_variant = VcfVariant.from_vcf_line(line)
             variant_sequence = vcf_variant.variant_sequence  #  we want variant sequence with leading base for insertions/deletions since we add reference sequence up until the variant start pos
+            if "," in variant_sequence:
+                variant_sequence = variant_sequence.split(",")[0]
+                logging.warning("Variant %s has multiple alleles. Not supported. Choosing first allele now." % vcf_variant)
 
             haplotype_sequence.append(variant_sequence)
             #print("Adding %d to haplotype coordinate (from haplotype sequence)" % len(haplotype_sequence))

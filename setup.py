@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='graph_read_simulator',
-      version='0.0.10',
+      version='0.0.11',
       description='Graph Read Simulator',
       url='http://github.com/ivargr/graph_read_simulator',
       author='Ivar Grytten',
