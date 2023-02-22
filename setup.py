@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='graph_read_simulator',
-      version='0.0.11',
+      version='0.0.15',
       description='Graph Read Simulator',
       url='http://github.com/ivargr/graph_read_simulator',
       author='Ivar Grytten',
@@ -9,7 +9,7 @@ setup(name='graph_read_simulator',
       license='MIT',
       packages=['graph_read_simulator'],
       zip_safe=False,
-      install_requires=['numpy', 'simple_read_mutator', 'pyfaidx', 'obgraph>=0.0.27'],
+      install_requires=['numpy', 'simple_read_mutator', 'pyfaidx', 'obgraph>=0.0.33', "biopython"],
       classifiers=[
             'Programming Language :: Python :: 3'
       ],

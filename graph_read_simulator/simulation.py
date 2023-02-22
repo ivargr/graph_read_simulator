@@ -15,8 +15,21 @@ class OneToOneCoordinateMap:
     def convert(self, coordinate):
         return coordinate
 
+class MultiChromosomeCoordinateMap:
+    def __init__(self, coordinate_maps: dict):
+        self._coordinate_maps = coordinate_maps
 
-class CoordinateMap():
+    def convert(self, chromosome, haplotype_coordinate):
+        return self._coordinate_maps[chromosome].convert(haplotype_coordinate)
+
+    def haplotype_has_variant_between(self, chromosome, start, end):
+        return self._coordinate_maps[chromosome].haplotype_coordinate_exists_between(start, end)
+
+    def reference_has_variant_between(self, chromosome, start, end):
+        return self._coordinate_maps[chromosome].reference_coordinate_exists_between(start, end)
+
+
+class CoordinateMap:
     def __init__(self, reference, haplotype):
         self.reference = reference
         self.haplotype = haplotype
@@ -60,6 +73,9 @@ class CoordinateMap():
 
         return adjusted_haplotype_coordinate
 
+    def reference_has_variant_between(self, start, end):
+        return self.reference_coordinate_exists_between(start, end)
+
     def haplotype_has_variant_between(self, start, end):
         return self.haplotype_coordinate_exists_between(start, end)
 
@@ -72,6 +88,17 @@ class CoordinateMap():
 
         return False
 
+    def reference_coordinate_exists_between(self, start, end):
+        index_start = np.searchsorted(self.reference, start)
+        index_end = np.searchsorted(self.reference, end)
+
+        if index_end > index_start:
+            return True
+
+        return False
+
+    def __str__(self):
+        return str(self.reference) + "\n" + str(self.haplotype)
 
 
 def simulate_reads(chromosome, haplotype, coverage=150, read_length=150, snv_prob=0.01, deletion_prob=0.001,
