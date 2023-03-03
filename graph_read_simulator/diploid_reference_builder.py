@@ -72,7 +72,7 @@ class DiploidReferenceBuilder:
             ref_sequence = l[3]
             ref_position = int(l[1])
 
-            vcf_variant = VcfVariant.from_vcf_line(line)
+            vcf_variant = VcfVariant.from_vcf_line(line, dont_encode_chromosome=True)
             variant_sequence = vcf_variant.variant_sequence  #  we want variant sequence with leading base for insertions/deletions since we add reference sequence up until the variant start pos
             if "," in variant_sequence:
                 variant_sequence = variant_sequence.split(",")[0]
@@ -125,6 +125,10 @@ class DiploidReferenceBuilder:
             haplotype_sequence.append(variant_sequence)
             #print("Adding %d to haplotype coordinate (from haplotype sequence)" % len(haplotype_sequence))
             current_haplotype_coordinate += len(variant_sequence)
+
+            #l = len(''.join(haplotype_sequence))
+            #print(current_haplotype_coordinate, l)
+            #assert current_haplotype_coordinate-1 == l
 
 
         logging.info("Joining haplotype sequence")
