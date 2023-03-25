@@ -19,7 +19,9 @@ class MultiChromosomeCoordinateMap:
     def __init__(self, coordinate_maps: dict):
         self._coordinate_maps = coordinate_maps
 
-    def convert(self, chromosome, haplotype_coordinate):
+    def convert(self, chromosome, haplotype_coordinate, reverse=False):
+        if reverse:
+            return self._coordinate_maps[chromosome].convert_reverse(haplotype_coordinate)
         return self._coordinate_maps[chromosome].convert(haplotype_coordinate)
 
     def haplotype_has_variant_between(self, chromosome, start, end):
@@ -43,7 +45,11 @@ class CoordinateMap:
         index = np.searchsorted(self.haplotype, haplotype_coordinate)
         # Find index of closest reference coordinate
         diff_before = haplotype_coordinate - self.haplotype[index-1]
-        diff_after = haplotype_coordinate - self.haplotype[index]
+        try:
+            diff_after = haplotype_coordinate - self.haplotype[index]
+        except IndexError:
+            logging.error("Index %d failed. N indexes in haplotype: %d. Haplotype coordinate: %d" % (index, len(self.haplotype), haplotype_coordinate))
+            raise
 
         if abs(diff_before) < abs(diff_after):
             index -= 1

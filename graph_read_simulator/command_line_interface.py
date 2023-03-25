@@ -1,6 +1,7 @@
 import logging
 logging.basicConfig(level=logging.INFO)
 import argparse
+import dataclasses
 import sys
 from .util import make_haplotype_fasta, vg_path_to_obg_interval, make_haplotype_paths
 from .simulation import simulate_reads
@@ -11,6 +12,31 @@ from pyfaidx import Fasta
 from .vcf_simulation import VcfSimulator
 import numpy as np
 from .vcf_simulation import Variants
+from .simulation import MultiChromosomeCoordinateMap
+from shared_memory_wrapper import from_file, to_file
+import bionumpy as bnp
+
+
+def liftover(args):
+    coordinate_map = from_file(args.coordinate_map)
+    assert isinstance(coordinate_map, MultiChromosomeCoordinateMap)
+    reverse = args.reverse
+
+    file = bnp.open(args.input, buffer_type=bnp.Bed6Buffer)
+    out_file = bnp.open(args.output, "w", buffer_type=bnp.Bed6Buffer)
+
+    for chunk in file.read_chunks():
+        chromosomes = chunk.chromosome.tolist()
+        starts = chunk.start
+        stops = chunk.stop
+
+        new_starts = np.array(
+            [coordinate_map.convert(chromosome, start, reverse=reverse) for chromosome, start in zip(chromosomes, starts)]
+        )
+        new_stops = new_starts + (stops-starts)
+
+        chunk = dataclasses.replace(chunk, start=new_starts, stop=new_stops)
+        out_file.write(chunk)
 
 
 def assign_ids_wrapper(args):
@@ -251,6 +277,15 @@ def run_argument_parser(args):
     command.add_argument("-o", "--out-file-name")
     command.add_argument("-s", "--random-seed", type=int, default=1, required=True)
     command.set_defaults(func=simulate_individual_vcf)
+
+    cmd = subparsers.add_parser("liftover")
+    cmd.add_argument("-i", "--input", required=True)
+    cmd.add_argument("-c", "--coordinate-map", required=True)
+    cmd.add_argument("-o", "--output", required=True)
+    cmd.add_argument("-r", "--reverse", required=False, type=bool)
+    cmd.set_defaults(func=liftover)
+
+
 
     args = parser.parse_args(args)
     args.func(args)
