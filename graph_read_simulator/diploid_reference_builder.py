@@ -40,7 +40,7 @@ class DiploidReferenceBuilder:
 
             if line.startswith("#CHROM") or line.startswith("#chrom") or line.startswith("#Chrom"):
                 sample = line.split()[9]
-                logging.info("Will create two linear references for individual %s" % sample)
+                #logging.info("Will create two linear references for individual %s" % sample)
                 continue
 
             #logging.info("LINE: %s" % line)
@@ -131,7 +131,6 @@ class DiploidReferenceBuilder:
             #assert current_haplotype_coordinate-1 == l
 
 
-        logging.info("Joining haplotype sequence")
         full_haplotype_sequence = ''.join(haplotype_sequence)
         #print(full_haplotype_sequence)
         #print(self._reference_coordinates)
@@ -142,13 +141,11 @@ class DiploidReferenceBuilder:
         self._haplotype_coordinates.append(len(full_haplotype_sequence))
 
 
-        logging.info("Saving")
         coordinate_map_fil_name = "%scoordinate_map_chromosome%s_haplotype%s.npz" % (self.base_output_name, self.chromosome, self.haplotype)
         np.savez(coordinate_map_fil_name, reference=np.array(self._reference_coordinates), haplotype=np.array(self._haplotype_coordinates))
-        logging.info("Saved coordinate map to %s" % coordinate_map_fil_name)
+        #logging.info("Saved coordinate map to %s" % coordinate_map_fil_name)
         with open("%schromosome%s_haplotype%d_reference.fasta" % (self.base_output_name, self.chromosome, self.haplotype), "w") as f:
             f.writelines([">%s\n" % self.chromosome, full_haplotype_sequence + "\n"])
 
-        logging.info("Saved")
         return CoordinateMap(self._reference_coordinates, self._haplotype_coordinates), full_haplotype_sequence
 
